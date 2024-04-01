@@ -31,108 +31,113 @@
 #ifndef LIMO_DRIVER_H
 #define LIMO_DRIVER_H
 
-#include <iostream>
-#include <thread>
-#include <memory>
-#include <atomic>
-#include <cstdlib>
-#include <chrono>
 #include "rclcpp/rclcpp.hpp"
+
 #include <rclcpp/executor.hpp>
-#include <nav_msgs/msg/odometry.hpp>
+
+#include "limo_msgs/msg/limo_status.hpp"
+#include "std_msgs/msg/string.hpp"
 #include <geometry_msgs/msg/twist.hpp>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 
-#include "std_msgs/msg/string.hpp"
-#include "limo_msgs/msg/limo_status.hpp"
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_ros/transform_broadcaster.h>
+
+#include <atomic>
+#include <chrono>
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <thread>
 // #include <ros/ros.h>
 // #include <tf/transform_broadcaster.h>
 // #include <tf/tf.h>
 // #include <nav_msgs/Odometry.h>
 // #include <sensor_msgs/Imu.h>
 // #include <limo_base/LimoStatus.h>
-#include "limo_base/serial_port.h"
 #include "limo_base/limo_protocol.h"
+#include "limo_base/serial_port.h"
 
-namespace AgileX {
+namespace AgileX
+{
 
-class LimoDriver : public rclcpp::Node{
+class LimoDriver : public rclcpp::Node
+{
 public:
-    LimoDriver(std::string node_name);
-    ~LimoDriver();
-    void run();
+  LimoDriver(std::string node_name);
+  ~LimoDriver();
+  void run();
 
 private:
-    
-    void connect(std::string dev_name, uint32_t bouadrate);
-    void readData();
-    void processRxData(uint8_t data);
-    void parseFrame(const LimoFrame& frame);
-    void sendFrame(const LimoFrame& frame);
-    void setMotionCommand(double linear_vel, double steer_angle,
-                          double lateral_vel, double angular_vel);
-    void enableCommandedMode();
-    void processErrorCode(uint16_t error_code);
-    void twistCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
-    void autowareCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
-    double normalizeAngle(double angle);
-    double degToRad(double deg);
-    double convertInnerAngleToCentral(double inner_angle);
-    double convertCentralAngleToInner(double central_angle);
-    void publishOdometry(double stamp, double linear_velocity,
-                         double angular_velocity, double lateral_velocity,
-                         double steering_angle);
-    void publishLimoState(double stamp, uint8_t vehicle_state, uint8_t control_mode,
-                          double battery_voltage, uint16_t error_code, int8_t motion_mode);
-    void publishIMUData(double stamp);
+  void connect(std::string dev_name, uint32_t bouadrate);
+  void readData();
+  void processRxData(uint8_t data);
+  void parseFrame(const LimoFrame & frame);
+  void sendFrame(const LimoFrame & frame);
+  void setMotionCommand(
+    double linear_vel, double steer_angle, double lateral_vel, double angular_vel);
+  void enableCommandedMode();
+  void processErrorCode(uint16_t error_code);
+  void twistCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
+  void autowareCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
+  double normalizeAngle(double angle);
+  double degToRad(double deg);
+  double convertInnerAngleToCentral(double inner_angle);
+  double convertCentralAngleToInner(double central_angle);
+  void publishOdometry(
+    double stamp, double linear_velocity, double angular_velocity, double lateral_velocity,
+    double steering_angle);
+  void publishLimoState(
+    double stamp, uint8_t vehicle_state, uint8_t control_mode, double battery_voltage,
+    uint16_t error_code, int8_t motion_mode);
+  void publishIMUData(double stamp);
 
 private:
-    rclcpp::Node *node_;
-    std::shared_ptr<SerialPort> port_;
-    std::shared_ptr<std::thread> read_data_thread_;
+  rclcpp::Node * node_;
+  std::shared_ptr<SerialPort> port_;
+  std::shared_ptr<std::thread> read_data_thread_;
 
-    std::atomic<bool> keep_running_;
+  std::atomic<bool> keep_running_;
 
-    std::string port_name_;
-    std::string odom_frame_;
-    std::string base_frame_;
-    std::string odom_topic_name_;
+  std::string port_name_;
+  std::string odom_frame_;
+  std::string base_frame_;
+  std::string odom_topic_name_;
 
-    bool pub_odom_tf_ = false;
-    bool use_mcnamu_ = false;
-    double present_theta_,last_theta_,delta_theta_,real_theta_,rad;
-    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher_;
-    rclcpp::Publisher<limo_msgs::msg::LimoStatus>::SharedPtr status_publisher_;
+  bool pub_odom_tf_ = false;
+  bool use_mcnamu_ = false;
+  double present_theta_, last_theta_, delta_theta_, real_theta_, rad;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher_;
+  rclcpp::Publisher<limo_msgs::msg::LimoStatus>::SharedPtr status_publisher_;
 
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr autoware_cmd_sub_;
-    // rclcpp::Subscription<scout_msgs::msg::ScoutLightCmd>::SharedPtr
-    //   light_cmd_sub_;
-    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
-    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-    
-    // ros::Publisher odom_publisher_;
-    // ros::Publisher status_publisher_;
-    // ros::Publisher imu_publisher_;
-    // ros::Subscriber motion_cmd_sub_;
-    // tf::TransformBroadcaster tf_broadcaster_;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr autoware_cmd_sub_;
+  // rclcpp::Subscription<scout_msgs::msg::ScoutLightCmd>::SharedPtr
+  //   light_cmd_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
-    double position_x_ = 0.0;
-    double position_y_ = 0.0;
-    double theta_ = 0.0;
+  // ros::Publisher odom_publisher_;
+  // ros::Publisher status_publisher_;
+  // ros::Publisher imu_publisher_;
+  // ros::Subscriber motion_cmd_sub_;
+  // tf::TransformBroadcaster tf_broadcaster_;
 
-    ImuData imu_data_;
-    uint8_t motion_mode_;  // current motion type
+  double position_x_ = 0.0;
+  double position_y_ = 0.0;
+  double theta_ = 0.0;
 
-    static constexpr double max_inner_angle_ = 0.48869;  // 28 degree
-    static constexpr double track_ = 0.172;           // m (left right wheel distance)
-    static constexpr double wheelbase_ = 0.2;         // m (front rear wheel distance)
-    static constexpr double left_angle_scale_ = 2.47;
-    static constexpr double right_angle_scale_ = 2.47;
+  ImuData imu_data_;
+  uint8_t motion_mode_;  // current motion type
+
+  static constexpr double max_inner_angle_ = 0.48869;  // 28 degree
+  static constexpr double track_ = 0.172;              // m (left right wheel distance)
+  static constexpr double wheelbase_ = 0.2;            // m (front rear wheel distance)
+  static constexpr double left_angle_scale_ = 2.47;
+  static constexpr double right_angle_scale_ = 2.47;
 };
 
-}
+}  // namespace AgileX
 
-#endif // LIMO_DRIVER_H
+#endif  // LIMO_DRIVER_H

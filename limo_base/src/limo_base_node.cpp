@@ -33,7 +33,7 @@ std::shared_ptr<LimoDriver> robot;
 
 // int main(int argc, char **argv) {
 //     rclcpp::init(argc, argv);
-//     AgileX::LimoDriver driver; 
+//     AgileX::LimoDriver driver;
 //     rclcpp::spin(std::make_shared<LimoDriver>());
 //     rclcpp::Rate rate(50);
 //     rate.sleep();
@@ -41,7 +41,8 @@ std::shared_ptr<LimoDriver> robot;
 //     return 0;
 // }
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv)
+{
   // setup ROS node
   rclcpp::init(argc, argv);
   //   std::signal(SIGINT, DetachRobot);

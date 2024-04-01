@@ -33,7 +33,8 @@
 
 #include <stdint.h>
 
-namespace AgileX {
+namespace AgileX
+{
 
 #define FRAME_HEADER 0x55
 #define FRAME_LENGTH 0x0E
@@ -57,50 +58,52 @@ namespace AgileX {
 #define MSG_ACTUATOR4_LS_STATE_ID 0x264
 
 // sensor data group: 0x3
-#define MSG_ODOMETRY_ID  0x311
+#define MSG_ODOMETRY_ID 0x311
 #define MSG_IMU_ACCEL_ID 0x321
-#define MSG_IMU_GYRO_ID  0x322
+#define MSG_IMU_GYRO_ID 0x322
 #define MSG_IMU_EULER_ID 0x323
 
 #define MSG_CTRL_MODE_CONFIG_ID 0x421
 
 // limo protocol data format
-typedef struct {
-    double stamp;
-    uint16_t id;
-    uint8_t data[8];
-    uint8_t count;
+typedef struct
+{
+  double stamp;
+  uint16_t id;
+  uint8_t data[8];
+  uint8_t count;
 } LimoFrame;
 
-typedef struct {
-    double accel_x;
-    double accel_y;
-    double accel_z;
-    double gyro_x;
-    double gyro_y;
-    double gyro_z;
-    double roll;
-    double pitch;
-    double yaw;
+typedef struct
+{
+  double accel_x;
+  double accel_y;
+  double accel_z;
+  double gyro_x;
+  double gyro_y;
+  double gyro_z;
+  double roll;
+  double pitch;
+  double yaw;
 } ImuData;
 
 enum {
-    LIMO_WAIT_HEADER = 0,
-    LIMO_WAIT_LENGTH,
-    LIMO_WAIT_ID_HIGH,
-    LIMO_WAIT_ID_LOW,
-    LIMO_WAIT_DATA,
-    LIMO_COUNT,
-    LIMO_CHECK,
+  LIMO_WAIT_HEADER = 0,
+  LIMO_WAIT_LENGTH,
+  LIMO_WAIT_ID_HIGH,
+  LIMO_WAIT_ID_LOW,
+  LIMO_WAIT_DATA,
+  LIMO_COUNT,
+  LIMO_CHECK,
 };
 
 enum {
-    MODE_FOUR_DIFF = 0x00,
-    MODE_ACKERMANN = 0x01,
-    MODE_MCNAMU = 0x02,
-    MODE_UNKNOWN = 0xff,
+  MODE_FOUR_DIFF = 0x00,
+  MODE_ACKERMANN = 0x01,
+  MODE_MCNAMU = 0x02,
+  MODE_UNKNOWN = 0xff,
 };
 
-}
+}  // namespace AgileX
 
 #endif  // LIMO_PROTOCOL_H
