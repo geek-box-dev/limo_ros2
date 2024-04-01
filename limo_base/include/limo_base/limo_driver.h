@@ -76,6 +76,7 @@ private:
     void enableCommandedMode();
     void processErrorCode(uint16_t error_code);
     void twistCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
+    void autowareCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
     double normalizeAngle(double angle);
     double degToRad(double deg);
     double convertInnerAngleToCentral(double inner_angle);
@@ -106,6 +107,7 @@ private:
     rclcpp::Publisher<limo_msgs::msg::LimoStatus>::SharedPtr status_publisher_;
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr autoware_cmd_sub_;
     // rclcpp::Subscription<scout_msgs::msg::ScoutLightCmd>::SharedPtr
     //   light_cmd_sub_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;

@@ -69,6 +69,8 @@ LimoDriver::LimoDriver(std::string node_name):rclcpp::Node(node_name),keep_runni
 
     motion_cmd_sub_= this->create_subscription<geometry_msgs::msg::Twist>(
         "/cmd_vel",10,std::bind(&LimoDriver::twistCmdCallback,this,std::placeholders::_1));
+    autoware_cmd_sub_= this->create_subscription<geometry_msgs::msg::Twist>(
+        "/autoware_cmd",10,std::bind(&LimoDriver::autowareCmdCallback,this,std::placeholders::_1));
 
     // odom_publisher_ = nh.advertise<nav_msgs::Odometry>("/odom", 50, true);
     // status_publisher_ = nh.advertise<limo_base::LimoStatus>("/limo_status", 10, true);
@@ -461,6 +463,11 @@ void LimoDriver::twistCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg
             // ROS_INFO("motion mode not supported in receive cmd_vel");waring
             break;
     }
+}
+
+void LimoDriver::autowareCmdCallback(const geometry_msgs::msg::Twist::SharedPtr msg)
+{
+  setMotionCommand(msg->linear.x, 0, 0, msg->angular.z);
 }
 
 void LimoDriver::publishIMUData(double stamp) {
